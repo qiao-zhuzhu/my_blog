@@ -1,13 +1,7 @@
 const moment = require('moment')
-var mysql = require('mysql');
 
-//引入mysql模块
-var conn = mysql.createConnection({
-    host: '127.0.0.1',
-    user: 'root',
-    password: 'root',
-    database: 'node-blog'
-});
+//导入数据库模块
+const conn = require('../db/index.js')
 
 
 //展示注册页面
