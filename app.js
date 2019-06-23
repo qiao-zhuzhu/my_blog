@@ -1,6 +1,9 @@
 const express = require('express')
 const app = express()
+const fs = require('fs')
+const path = require('path')
 const bodyParser = require('body-parser')
+
 
 // 设置 默认采用的模板引擎名称
 app.set('view engine', 'ejs')
@@ -13,31 +16,24 @@ app.use(bodyParser.urlencoded({ extended: false }))
 //把node.modules 文件夹 托管为静态资源目录
 app.use('/node_modules', express.static('node_modules'))
 
-// 用户请求的项目首页
-app.get('/', (req, res) => {
-    res.render('index', { name: 'zs', age: 22 })
-})
+// //导入router/index.js 路由模块
+// const index = require('./router/index.js')
+// app.use(index)
 
-//注册
-app.get('/register', (req, res) => {
-    res.render('./user/register.ejs', {})
-})
+// //导入router/user.js 路由模块
+// const user = require('./router/user.js')
+// app.use(user)
 
-
-//登录
-app.get('/login', (req, res) => {
-    res.render('./user/login.ejs', {})
-})
-
-
-//注册新用户
-app.post('/register', (req, res) => {
-    //TODO：完成用户注册的业务逻辑
-    const body = req.body
-
-    console.log(body);
-
-    res.send({ msg: 'ok', status: 200 })
+//
+fs.readdir(path.join(__dirname, './router'), (err, filenames) => {
+    if (err) return console.log('读取router目录中的路由失败！')
+        //循环router目录下的每一个文件
+    filenames.forEach(fname => {
+        //每循环一次 拼接出一个完整的路由模块地址
+        //然后 使用require 导入这个路由模块
+        const router = require(path.join(__dirname, './router', fname))
+        app.use(router)
+    })
 })
 
 
